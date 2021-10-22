@@ -4,17 +4,7 @@
   * @file           : main.c
   * @brief          : Main program body
   ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
+
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -40,11 +30,11 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart1;
-UART_HandleTypeDef huart2;
+UART_HandleTypeDef huart1;  //wire serial to bluetooth
+UART_HandleTypeDef huart2;  //USB
 
 /* USER CODE BEGIN PV */
-
+uint8_t Rx, Tx;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,7 +48,23 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void  HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+  //receive data from bluetooh
+  //transmit via USB
+  //OR
+  //receive data from USB
+  //Transmit to bluetooth
+  if(huart->Instance == USART1) //wire serial to bluetooth
+  {
+    
 
+  }
+  else if(huart->Instance == USART2) //USB Serial
+  {
+
+  }
+} 
 /* USER CODE END 0 */
 
 /**
@@ -92,7 +98,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UART_Receive_IT(&huart1, &Rx, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -287,5 +293,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
