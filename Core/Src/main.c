@@ -9,7 +9,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -34,7 +33,9 @@ UART_HandleTypeDef huart1;  //wire serial to bluetooth
 UART_HandleTypeDef huart2;  //USB
 
 /* USER CODE BEGIN PV */
-uint8_t Rx, Tx;
+uint8_t Rx_USB;//, Tx_USB;
+uint8_t Rx_Wire;//, Tx_Wire;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -55,15 +56,17 @@ void  HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   //OR
   //receive data from USB
   //Transmit to bluetooth
-  if(huart->Instance == USART1) //wire serial to bluetooth
+  if(huart->Instance == USART1) //received data from wire serial
   {
+    HAL_UART_Transmit(&huart2, &Rx_Wire, 1, 10); //send to USB    
+  }
+  else if(huart->Instance == USART2) //received data from USB Serial
+  {
+    HAL_UART_Transmit(&huart1, &Rx_USB, 1, 10);  //send to Bluetooth
     
-
   }
-  else if(huart->Instance == USART2) //USB Serial
-  {
-
-  }
+  HAL_UART_Receive_IT(&huart1, &Rx_Wire, 1); 
+  HAL_UART_Receive_IT(&huart2, &Rx_USB, 1); //re-enable interrupt
 } 
 /* USER CODE END 0 */
 
@@ -90,7 +93,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -98,7 +101,10 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Receive_IT(&huart1, &Rx, 1);
+  HAL_UART_Receive_IT(&huart1, &Rx_Wire, 1); //Wire interrupt to Bluetooth module
+  HAL_UART_Receive_IT(&huart2, &Rx_USB, 1); //USB interrupt
+   
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,7 +112,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
